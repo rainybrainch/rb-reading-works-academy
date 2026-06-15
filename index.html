@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RB読書作品のアカデミー</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#e6edf3;font-family:'Zen Maru Gothic',sans-serif;min-height:100vh;padding-bottom:60px}
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@400;700&display=swap');
+.hdr{background:linear-gradient(135deg,#0d1117,#1a2332);padding:18px 20px;border-bottom:2px solid #F5C842;display:flex;align-items:center;gap:12px}
+.hdr h1{font-family:'Dela Gothic One',sans-serif;font-size:1.2rem;color:#F5C842}
+.back-btn{background:none;border:1px solid #F5C842;color:#F5C842;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.8rem}
+.screen{display:none;padding:16px}
+.screen.active{display:block}
+/* Home */
+.hero{text-align:center;padding:24px 16px 16px;background:linear-gradient(180deg,#1a1600,#0d1117);border-radius:12px;margin-bottom:20px}
+.hero-emoji{font-size:3rem;margin-bottom:8px}
+.hero h2{font-family:'Dela Gothic One',sans-serif;font-size:1.4rem;color:#F5C842;margin-bottom:6px}
+.hero p{color:#8b949e;font-size:.85rem;line-height:1.6}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px;text-align:center}
+.stat-num{font-family:'Dela Gothic One',sans-serif;font-size:1.6rem;color:#F5C842}
+.stat-lbl{font-size:.7rem;color:#8b949e;margin-top:2px}
+.daily-tip{background:linear-gradient(135deg,#1a1600,#2a2000);border:1px solid #F5C842;border-radius:10px;padding:14px;margin-bottom:20px}
+.daily-tip .tip-lbl{font-size:.7rem;color:#F5C842;margin-bottom:6px;font-weight:bold}
+.daily-tip p{font-size:.85rem;color:#c9d1d9;line-height:1.5}
+.sec-title{font-family:'Dela Gothic One',sans-serif;font-size:1rem;color:#F5C842;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.course-card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:16px;margin-bottom:14px;cursor:pointer;transition:border-color .2s}
+.course-card:hover{border-color:#F5C842}
+.course-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.course-emoji{font-size:2rem}
+.course-info h3{font-size:1rem;font-weight:bold;margin-bottom:3px}
+.badge{font-size:.65rem;padding:2px 8px;border-radius:10px;font-weight:bold}
+.badge-gold{background:#2a2000;color:#F5C842;border:1px solid #F5C842}
+.badge-green{background:#0d2818;color:#4CAF7D;border:1px solid #4CAF7D}
+.badge-sky{background:#0d2233;color:#5BC8E8;border:1px solid #5BC8E8}
+.course-desc{font-size:.8rem;color:#8b949e;margin-bottom:10px;line-height:1.5}
+.progress-bar{height:4px;background:#21262d;border-radius:2px;overflow:hidden;margin-bottom:6px}
+.progress-fill{height:100%;background:#F5C842;transition:width .3s}
+.progress-lbl{font-size:.7rem;color:#8b949e}
+.lesson-list{border-top:1px solid #21262d;margin-top:10px;padding-top:10px}
+.lesson-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #21262d;cursor:pointer;font-size:.85rem}
+.lesson-item:last-child{border-bottom:none}
+.lesson-check{width:20px;height:20px;border-radius:50%;border:2px solid #30363d;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.7rem}
+.lesson-check.done{background:#F5C842;border-color:#F5C842;color:#0d1117}
+.lesson-title{flex:1}
+.lesson-dur{font-size:.7rem;color:#8b949e}
+.quiz-btn{width:100%;background:linear-gradient(135deg,#1a1600,#2a2000);border:2px solid #F5C842;color:#F5C842;padding:12px;border-radius:10px;cursor:pointer;font-size:.9rem;font-family:'Dela Gothic One',sans-serif;margin-top:16px}
+/* Lesson */
+.lesson-hdr{background:#161b22;border-radius:10px;padding:14px;margin-bottom:16px}
+.lesson-hdr h2{font-size:1.1rem;font-weight:bold;margin-bottom:6px}
+.lesson-meta{display:flex;gap:10px;flex-wrap:wrap}
+.lesson-meta span{font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 8px;border-radius:10px}
+.section-block{margin-bottom:16px}
+/* Video slot */
+.video-slot{background:#0d0d0d;border:2px dashed #F5C842;border-radius:12px;padding:0;margin:10px 0;overflow:hidden;position:relative}
+.video-slot iframe{width:100%;height:200px;border:none;display:block}
+.video-placeholder{background:#0d0d0d;border:2px dashed #30363d;border-radius:12px;padding:32px 16px;margin:10px 0;text-align:center;color:#30363d}
+.video-placeholder .vp-icon{font-size:2.5rem;margin-bottom:8px}
+.video-placeholder .vp-text{font-size:.8rem}
+/* Manga slot */
+.manga-slot{background:#0d0d0d;border:2px dashed #5BC8E8;border-radius:12px;padding:0;margin:10px 0;overflow:hidden}
+.manga-slot img{width:100%;display:block;border-radius:10px}
+.manga-placeholder{background:#0d1117;border:2px dashed #30363d;border-radius:12px;padding:24px 16px;margin:10px 0;text-align:center;color:#30363d}
+.manga-placeholder .mp-icon{font-size:2rem;margin-bottom:6px}
+.manga-placeholder .mp-text{font-size:.78rem}
+/* Sections */
+.info-box{background:#1a1600;border-left:3px solid #F5C842;border-radius:0 8px 8px 0;padding:12px;font-size:.85rem;line-height:1.6;color:#c9d1d9}
+.sec-heading{font-size:1rem;font-weight:bold;color:#F5C842;margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.sec-heading::before{content:'';display:inline-block;width:3px;height:1em;background:#F5C842;border-radius:2px}
+.text-block{font-size:.85rem;line-height:1.7;color:#c9d1d9}
+.highlight-box{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;margin:10px 0}
+.highlight-box .hl-title{font-size:.8rem;font-weight:bold;color:#F5C842;margin-bottom:8px}
+.highlight-box ul{list-style:none;padding:0}
+.highlight-box li{font-size:.82rem;color:#c9d1d9;padding:4px 0;padding-left:16px;position:relative;line-height:1.5}
+.highlight-box li::before{content:'▸';position:absolute;left:0;color:#F5C842}
+.practice-block{background:#1a1600;border:1px solid #F5C842;border-radius:10px;padding:14px;margin:10px 0}
+.practice-q{font-size:.85rem;font-weight:bold;color:#F5C842;margin-bottom:10px;line-height:1.5}
+.reveal-btn{background:#21262d;border:1px solid #F5C842;color:#F5C842;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.8rem;margin-bottom:8px}
+.practice-a{display:none;font-size:.82rem;color:#c9d1d9;line-height:1.6;background:#0d1117;padding:10px;border-radius:6px;margin-top:8px}
+.practice-a.shown{display:block}
+.glossary-block{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;margin:10px 0}
+.glossary-title{font-size:.8rem;color:#F5C842;font-weight:bold;margin-bottom:8px}
+.glossary-term{margin-bottom:10px}
+.glossary-term .term{font-size:.82rem;font-weight:bold;color:#F5C842;margin-bottom:2px}
+.glossary-term .def{font-size:.8rem;color:#8b949e;line-height:1.5}
+.summary-block{background:linear-gradient(135deg,#1a1600,#2a2000);border:1px solid #F5C842;border-radius:10px;padding:14px;margin:10px 0}
+.summary-block .sum-lbl{font-size:.7rem;color:#F5C842;font-weight:bold;margin-bottom:6px}
+.summary-block p{font-size:.85rem;color:#c9d1d9;line-height:1.6}
+.sum-next{font-size:.78rem;color:#8b949e;margin-top:6px;font-style:italic}
+.checklist{margin:14px 0}
+.check-item{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid #30363d;border-radius:8px;margin-bottom:6px;cursor:pointer;transition:background .2s}
+.check-item.checked{background:#1a1600;border-color:#F5C842}
+.check-item input{width:16px;height:16px;accent-color:#F5C842}
+.check-label{font-size:.82rem;color:#c9d1d9}
+.complete-btn{width:100%;background:linear-gradient(135deg,#F5C842,#c9a200);border:none;color:#0d1117;font-family:'Dela Gothic One',sans-serif;font-size:1rem;padding:14px;border-radius:10px;cursor:pointer;margin-top:16px}
+.complete-btn:disabled{opacity:.4;cursor:default}
+.lesson-nav{display:flex;gap:10px;margin-top:12px}
+.lesson-nav button{flex:1;background:#161b22;border:1px solid #30363d;color:#e6edf3;padding:10px;border-radius:8px;cursor:pointer;font-size:.82rem}
+.lesson-nav button.primary{background:#F5C842;border-color:#F5C842;color:#0d1117;font-weight:bold}
+/* Quiz */
+.quiz-wrap{max-width:500px;margin:0 auto}
+.quiz-q{font-size:.95rem;font-weight:bold;color:#e6edf3;margin-bottom:16px;line-height:1.5}
+.quiz-opts button{display:block;width:100%;text-align:left;background:#161b22;border:1px solid #30363d;color:#c9d1d9;padding:10px 14px;border-radius:8px;margin-bottom:8px;cursor:pointer;font-size:.85rem}
+.quiz-opts button.correct{background:#1a1600;border-color:#F5C842;color:#F5C842}
+.quiz-opts button.wrong{background:#2a0d0d;border-color:#E8354A;color:#E8354A}
+.quiz-result{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;margin-top:12px;font-size:.85rem;color:#c9d1d9;line-height:1.6;display:none}
+.quiz-result.shown{display:block}
+.quiz-progress{display:flex;justify-content:space-between;font-size:.75rem;color:#8b949e;margin-bottom:12px}
+.quiz-score-big{text-align:center;padding:24px;background:#161b22;border:1px solid #F5C842;border-radius:12px}
+.quiz-score-big .score-num{font-family:'Dela Gothic One',sans-serif;font-size:3rem;color:#F5C842}
+.quiz-score-big p{color:#8b949e;font-size:.85rem;margin-top:6px}
+.next-q-btn{width:100%;background:#F5C842;border:none;color:#0d1117;font-weight:bold;padding:10px;border-radius:8px;cursor:pointer;margin-top:12px;font-size:.9rem}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#F5C842;color:#0d1117;padding:10px 20px;border-radius:20px;font-size:.85rem;font-weight:bold;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <button class="back-btn" onclick="goHome()">← ホーム</button>
+  <h1>📚 RB読書作品のアカデミー</h1>
+</div>
+<div id="toast" class="toast"></div>
+
+<!-- HOME -->
+<div id="s1" class="screen active">
+  <div style="padding:16px">
+    <div class="hero">
+      <div class="hero-emoji">📖</div>
+      <h2>RB読書作品のアカデミー</h2>
+      <p>名著・ベストセラー・古典を深く読む<br>動画解説と漫画で、読書が10倍楽しくなる</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="statComp">0</div><div class="stat-lbl">完了レッスン</div></div>
+      <div class="stat-card"><div class="stat-num" id="statPct">0%</div><div class="stat-lbl">進捗率</div></div>
+      <div class="stat-card"><div class="stat-num" id="statCourses">0</div><div class="stat-lbl">完了コース</div></div>
+    </div>
+    <div class="daily-tip">
+      <div class="tip-lbl">📖 今日の読書名言</div>
+      <p id="dailyTipText"></p>
+    </div>
+    <button class="quiz-btn" onclick="startQuiz()">📚 作品クイズに挑戦</button>
+    <div style="margin-top:20px">
+      <div class="sec-title">📚 コース一覧</div>
+      <div id="courseList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LESSON -->
+<div id="s2" class="screen">
+  <div style="padding:16px" id="lessonContent"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="s3" class="screen">
+  <div style="padding:16px">
+    <div class="sec-title">📚 作品理解クイズ</div>
+    <div class="quiz-wrap" id="quizWrap"></div>
+  </div>
+</div>
+
+<script>
+const TIPS=[
+  '「読書は他者の人生を生きること」——ショーペンハウアー。一冊の本は著者の何年もの思考を数時間で受け取れる奇跡だ。',
+  '村上春樹は毎朝4時に起き、1日5〜6時間執筆する。「好きなことを続けるには規律が必要だ」と語っている。',
+  '「嫌われる勇気」のアドラー心理学の核心は「すべての悩みは対人関係の悩みである」という一文に集約される。',
+  'スティーブン・キングは「読まない人間は書けない」と言い、年間70〜80冊を読む。読書はライターとしての必修だと考えている。',
+  '「7つの習慣」が伝える最も重要な習慣の一つは「まず理解に徹し、そして理解される」——聴く力の重要さだ。',
+  '夏目漱石は「吾輩は猫である」を書いた当初、続編を書くつもりはなかった。読者の好評を受けて連載が続いた。',
+  '「サピエンス全史」でハラリは「虚構（フィクション）を信じる能力こそがホモ・サピエンスを他の動物と分けた」と主張する。',
+  'アンネ・フランクの日記は13歳の誕生日プレゼントとして贈られた日記帳に書かれた。世界で最も読まれた本の一つ。',
+  '「星の王子さま」のサンテグジュペリは飛行士でもあり、偵察任務中の1944年に消息を絶った。作品が書かれた経緯も感動的。',
+  '「坊っちゃん」「こころ」など漱石の多くの作品に共通するテーマは「近代日本人の孤独と自己喪失」とされる。',
+  'ドストエフスキーは「カラマーゾフの兄弟」執筆中に「これが私の最高傑作だ」と言った。出版直後に亡くなった。',
+  '「人間失格」の太宰治は「恥の多い生涯を送ってきました」という冒頭の一文で、読者を一気に引き込む名文家だった。'
+];
+
+const COURSES=[
+  {
+    id:'selfdev',
+    emoji:'💡',
+    title:'自己啓発の名著を読む',
+    desc:'「7つの習慣」「嫌われる勇気」「think and grow rich」——人生を変える名著の核心を深く理解する',
+    level:'入門',
+    badgeClass:'badge-gold',
+    lessons:[
+      {
+        id:'sd-1',
+        title:'「嫌われる勇気」——アドラー心理学の核心',
+        duration:'15分',
+        videoUrl:null,
+        mangaUrl:null,
+        checkItems:['アドラーの「目的論」を説明できる','課題の分離の考え方を理解した','承認欲求から自由になる方法を言えた'],
+        sections:[
+          {type:'info-box',content:'「嫌われる勇気」は日本で300万部以上売れた現代の哲学書。哲人と青年の対話形式で、アドラー心理学の本質を伝える。'},
+          {type:'video',url:null,label:'📹 動画解説：嫌われる勇気の核心（準備中）'},
+          {type:'heading',content:'アドラー心理学の3大革命的概念'},
+          {type:'text',content:'アルフレッド・アドラー（1870-1937）はフロイトと並ぶ心理学の巨人。しかし考え方は正反対で「人は過去ではなく、現在の目的によって動く（目的論）」と主張した。フロイトの「原因論（トラウマが人を動かす）」を完全に否定したのです。'},
+          {type:'highlight-box',title:'アドラー心理学の3大柱',items:['目的論：人の行動は過去の原因でなく、今達成したい目的から生まれる。「怒り」は感情の爆発ではなく、相手を支配するための道具として使われている','課題の分離：「これは誰の課題か？」を常に問う。子供の勉強は子供の課題であり、親が介入すべきでない。他者の課題を背負わないことで自由になれる','承認欲求の否定：他者に承認されるために生きることをやめると本当の自由が手に入る。「嫌われる勇気」とはこの自由を持つ勇気のこと']},
+          {type:'manga',url:null,label:'🎨 漫画解説：課題の分離とは（準備中）'},
+          {type:'text',content:'本書で最も重要なメッセージは「すべての悩みは対人関係の悩みである」という命題。孤独の悩み・劣等感・人間関係のストレス——すべての根っこは他者との比較と承認欲求から生まれていると説く。'},
+          {type:'practice',question:'「上司に怒られてばかりで、自分は仕事ができないと思ってしまう」という友人にアドラー心理学の観点からアドバイスをしてください。',answer:'アドラーの「課題の分離」で考える。上司が怒るのは上司の課題（上司の感情・評価の問題）。それをどう受け取るかは自分の課題。「上司に怒られる→自分は駄目だ」という結論は他者（上司）の評価に自分のアイデンティティを委ねている状態。アドラーなら「上司はなぜ怒っているのか（目的）？」と問う。仕事の改善点があれば学べばよい。それでもなお「承認されない」なら、承認を必要としない自由な生き方（嫌われる勇気）を持つことが解決策になる。'},
+          {type:'glossary',terms:[{term:'目的論',definition:'人間の行動を「原因」ではなく「目的（何を達成したいか）」から説明するアドラーの理論。「怒りが爆発した（原因論）」ではなく「怒りを使って相手を動かそうとした（目的論）」と解釈する。'},{term:'課題の分離',definition:'「これは誰の課題（問題）か？」を明確に分けること。他者の課題に介入せず、自分の課題のみに集中することで対人関係の悩みの大部分が解消されるとアドラーは主張した。'},{term:'共同体感覚',definition:'アドラー心理学の目標概念。自分が世界の一部として他者に貢献しているという感覚。孤独・劣等感の対極にある状態で、幸福感の源泉とされる。'}]},
+          {type:'summary',content:'「嫌われる勇気」の核心は「過去でなく今を選ぶ自由」「他者の課題を手放す勇気」「承認なしに生きる自立」の3つ。読んだ後は世界の見え方が変わります。',nextLesson:'次は「7つの習慣」へ'}
+        ]
+      },
+      {
+        id:'sd-2',
+        title:'「7つの習慣」——人格主義の復活',
+        duration:'15分',
+        videoUrl:null,
+        mangaUrl:null,
+        checkItems:['主体性の概念をコヴィーの言葉で説明できる','第2の領域（重要だが緊急でない）を実行できる','Win-Winの考え方を具体例で話せる'],
+        sections:[
+          {type:'info-box',content:'「7つの習慣」は全世界3000万部。コヴィーは「成功の原則は時代を超えた普遍的な人格（Character）にある」と主張した。'},
+          {type:'video',url:null,label:'📹 動画解説：7つの習慣の全体像（準備中）'},
+          {type:'heading',content:'第1の習慣：主体性を発揮する'},
+          {type:'text',content:'コヴィーが最初に置く習慣は「主体性（Be Proactive）」。「刺激と反応の間には選択の自由がある」という概念が核心です。天気が悪くても、上司が怒っても、それに「どう反応するか」は自分が選べる。反応的な人は刺激に自動的に反応するが、主体的な人は刺激を受けた後に「どう応じるか」を選択します。'},
+          {type:'highlight-box',title:'7つの習慣の全体構造',items:['習慣1：主体性を発揮する（刺激→反応の間に選択の自由がある）','習慣2：終わりを思い描くことから始める（自分の葬儀で何と言われたいか）','習慣3：最優先事項を優先する（第2領域＝重要だが緊急でないことに時間を使う）','習慣4：Win-Winを考える（相互利益を追求する人格）','習慣5：まず理解に徹し、そして理解される（傾聴の技術）','習慣6：シナジーを創り出す（1+1を3以上にする協力）','習慣7：刃を研ぐ（心身・精神・社会の継続的更新）']},
+          {type:'manga',url:null,label:'🎨 漫画解説：時間管理の4つの領域（準備中）'},
+          {type:'text',content:'特に重要な「第2の領域」の概念。時間を「緊急か否か」「重要か否か」の2軸で4分割すると、多くの人は「緊急で重要（第1領域）」と「緊急だが重要でない（第3領域）」に時間を使い、「重要だが緊急でない（第2領域）」を後回しにする。しかし人生の質を決めるのは第2領域——健康・関係・スキル・計画——への投資です。'},
+          {type:'practice',question:'「毎日メールやSlack返信に追われて、本当にやりたいことができない」という問題を、コヴィーの「4つの領域」を使って分析し、改善策を提案してください。',answer:'メール・Slack返信は「緊急だが重要でない（第3領域）」の典型。これに追われている状態はメールを送る側に時間をコントロールされている反応的な状態。改善策：①「重要だが緊急でない（第2領域）」の作業時間を先にカレンダーに確保する②メール確認を1日2〜3回（朝・昼・夕）に限定する③「即返信が必要」という思い込みを変える——コヴィーは「第3領域を断つ勇気が第2領域を作る」と述べている。'},
+          {type:'glossary',terms:[{term:'主体性（Proactivity）',definition:'刺激と反応の間にある「選択の自由」を行使する能力。天気・他者の態度・過去の出来事は変えられないが、それに「どう反応するか」は常に選択できるという概念。'},{term:'第2の領域',definition:'「重要だが緊急でない」活動の時間帯。健康維持・関係構築・スキル習得・長期計画など。多くの人が後回しにするが、人生の質と成功を決定する最重要ゾーン。'},{term:'シナジー',definition:'習慣6。異なる観点・強みを持つ人々が協力することで、単純な足し算を超えた創造的な結果を生み出すこと。コヴィーはこれを全習慣の集大成と位置づける。'}]},
+          {type:'summary',content:'「7つの習慣」は「人格（Character）」を磨くことが長期的成功の唯一の道だという主張。習慣1〜3（私的成功）→習慣4〜6（公的成功）→習慣7（更新）の構造が美しい。',nextLesson:'自己啓発コース完了！'}
+        ]
+      }
+    ]
+  },
+  {
+    id:'jpnlit',
+    emoji:'🌸',
+    title:'日本文学の名作を読む',
+    desc:'夏目漱石・太宰治・芥川龍之介——近代日本文学の巨人たちの作品世界を深く読み解く',
+    level:'入門',
+    badgeClass:'badge-green',
+    lessons:[
+      {
+        id:'jp-1',
+        title:'「こころ」——漱石が描いた近代の孤独',
+        duration:'14分',
+        videoUrl:null,
+        mangaUrl:null,
+        checkItems:['作品の3部構造を説明できる','「先生」が抱えた罪の内容を言えた','明治の近代化と個人主義の関係を説明できる'],
+        sections:[
+          {type:'info-box',content:'「こころ」（1914年）は夏目漱石の晩年の傑作。「先生」という謎めいた人物の告白を通じて、近代人の孤独・罪・自己嫌悪を描く。'},
+          {type:'video',url:null,label:'📹 動画解説：こころのあらすじと主題（準備中）'},
+          {type:'heading',content:'「こころ」の3部構造と謎'},
+          {type:'text',content:'「こころ」は「先生と私」「両親と私」「先生と遺書」の3部構成。語り手「私」が鎌倉の海岸で出会った「先生」に惹かれ、やがて先生の過去の秘密——友人Kへの裏切りと自殺——を長い遺書で知ることになります。'},
+          {type:'highlight-box',title:'「こころ」の3大テーマ',items:['近代的自我の孤独：西洋化する日本で「個人」として生きることの孤立と苦しみ。先生は誰も信じられない孤独を生き続ける','罪と自己罰：先生はKへの裏切り（Kが好きな女性を横取りした）を生涯抱え、自ら死を選ぶことで贖罪する','明治の終わりと個人の死：明治天皇崩御・乃木大将殉死と時を同じくして先生が死を選ぶ。明治精神の終焉を象徴する']},
+          {type:'manga',url:null,label:'🎨 漫画版：先生とKの物語（準備中）'},
+          {type:'text',content:'漱石は「こころ」を朝日新聞に連載しながら、「エゴイズム（利己主義）」というテーマを一貫して追いかけた。先生の罪は「愛のためにKを裏切った」エゴイズム。そしてそのエゴイズムに気づいた先生は自分自身を許せなくなる。漱石が「則天去私（天に従って私を去る）」という境地を晩年目指したのも、このエゴイズムとの闘いの反映です。'},
+          {type:'practice',question:'「先生」は友人Kが同じ女性（お嬢さん）を好きだと知っていながら、先にお嬢さんの父親に結婚の申し込みをします。これを「裏切り」と呼ぶのは正当ですか？先生の心理を分析してください。',answer:'「裏切り」と呼ぶのは正当。先生はKが打ち明けた恋愛の苦しみを聞いた直後、Kより先に動いた。友情（Kへの義理）より恋愛（自分の欲求）を優先したのは意識的な選択。しかし先生が自らを許せなかった最大の理由は「動機の卑しさ」——好きだからではなく「Kに取られる前に」という恐怖から行動したからだ。純粋な愛ならまだ自分を許せたかもしれないが、嫉妬と先取りという不純な動機が生涯の呪いになった。'},
+          {type:'glossary',terms:[{term:'則天去私',definition:'漱石の晩年の境地を表す言葉。「天（自然・真理）に従って、私（エゴ）を去る」という意味。利己的な自我を超えた普遍的な自然の摂理に従う生き方を理想とした。'},{term:'明治の精神',definition:'「こころ」で先生が語る概念。明治という時代の理想・価値観を体現した精神。先生は「明治の精神に殉死する」という形で乃木大将の殉死に共鳴して自らの死を選ぶ。'},{term:'エゴイズム（利己主義）',definition:'漱石文学を貫くテーマ。近代化によって「個人」が確立された結果、自己中心的な欲求（エゴ）と他者・社会への責任の葛藤が生まれた。「こころ」「それから」等でこの葛藤が描かれる。'}]},
+          {type:'summary',content:'「こころ」は「罪を抱えて生きることの重さ」を描いた日本近代文学の最高峰。先生の告白は今も読者の心を震わせる普遍的な人間の業の記録です。',nextLesson:'次は「人間失格」へ'}
+        ]
+      },
+      {
+        id:'jp-2',
+        title:'「人間失格」——太宰治の告白文学',
+        duration:'13分',
+        videoUrl:null,
+        mangaUrl:null,
+        checkItems:['大庭葉蔵の「道化」という処世術を説明できる','太宰の自伝的要素と虚構の関係を言えた','「恥の多い生涯」の意味を自分の言葉で解釈できた'],
+        sections:[
+          {type:'info-box',content:'「人間失格」（1948年）は太宰治の遺作。「恥の多い生涯を送ってきました」から始まる衝撃的な告白文学で、日本文学史上最も読まれた作品の一つ。'},
+          {type:'video',url:null,label:'📹 動画解説：人間失格のテーマ解読（準備中）'},
+          {type:'heading',content:'「道化（道化師）」——人間不信と自己防衛'},
+          {type:'text',content:'主人公・大庭葉蔵は幼い頃から「人間が怖い」と感じていた。その解決策として「道化（ピエロ）」を演じることを選ぶ。人を笑わせることで、自分の本当の姿——人間への恐怖と嫌悪——を隠し続けた。しかしその道化は彼を人間から遠ざけ、孤独をますます深めた。'},
+          {type:'highlight-box',title:'「人間失格」を読み解く3つの鍵',items:['道化という処世術：人を笑わせ=人間関係の潤滑油として機能させるが、本音を隠すための仮面でもある。この仮面を外せなくなることが「失格」の始まり','酒・女・薬への逃避：人間に適応できない葛藤から逃げる手段。しかしこれらも根本的な解決にならず、むしろ「失格」を加速させる','自己嫌悪の構造：「人間が怖い→道化を演じる→本音を言えない→自分が嫌い→さらに人間が怖い」の悪循環。これが全編を貫くテーマ']},
+          {type:'manga',url:null,label:'🎨 漫画版：葉蔵の道化の始まり（準備中）'},
+          {type:'text',content:'太宰は本作の3ヶ月後、愛人・山崎富栄と入水自殺した。作品が自伝的色彩を強く持つため「太宰＝葉蔵」と読む向きもあるが、それは一側面にすぎない。太宰は「この告白はフィクションだが、感情はリアルだ」という境界で書いている。作品としての完成度は太宰文学の最高峰であり、「弱さ」を芸術まで高めた稀有な作品です。'},
+          {type:'practice',question:'葉蔵は「道化を演じることで人間関係を保った」と述べています。現代社会でSNSに「楽しい自分」だけを投稿し本音を隠すことと、葉蔵の道化にはどのような共通点・相違点があるか論じてください。',answer:'共通点：①自分の本当の姿（不安・孤独・失敗）を隠すという自己防衛②人から好かれたい・傷つきたくないという欲求が根底にある③本音を開示できないことによる孤独感の深化。相違点：①SNSは現代に生まれたツールだが、道化という仮面は時代に関係ない普遍的心理②SNSは選択的な自己開示（オンとオフを切り替えられる）だが、葉蔵の道化は人生全体に浸透して本音との境界が消えた③SNSは繋がりの錯覚を与えるが、葉蔵の道化は繋がりを望んでいない（人間が怖い）点が根本的に異なる。'},
+          {type:'glossary',terms:[{term:'道化（ピエロ）',definition:'人を笑わせ楽しませる役割。「人間失格」では葉蔵が自己防衛のために演じる仮面として機能する。笑わせることで本音（人間への恐怖）を隠し、同時に人間関係を保つ逆説的な手段。'},{term:'無頼派（ブライハ）',definition:'太宰治・坂口安吾・織田作之助らが属した戦後の文学グループ。既存の道徳・秩序への反抗と、人間の弱さ・堕落を正直に描くことを特徴とした。'},{term:'告白文学',definition:'作者（あるいは主人公）が自己の内面・罪・弱さを告白する形式の文学。「人間失格」はその最高峰。フランスのルソー「告白録」を源流に持つ。'}]},
+          {type:'summary',content:'「人間失格」は「弱さを極限まで正直に書く」ことで文学の高みに達した奇跡の作品。太宰が嫌われながら愛される理由は、この作品の中に完全に詰まっています。',nextLesson:'日本文学コース完了！'}
+        ]
+      }
+    ]
+  },
+  {
+    id:'worldlit',
+    emoji:'🌍',
+    title:'世界文学の名作を読む',
+    desc:'ドストエフスキー・カフカ・ヘミングウェイ——世界文学の巨人たちと対話する読書ガイド',
+    level:'中級',
+    badgeClass:'badge-sky',
+    lessons:[
+      {
+        id:'wl-1',
+        title:'「罪と罰」——ドストエフスキーの心理劇',
+        duration:'16分',
+        videoUrl:null,
+        mangaUrl:null,
+        checkItems:['ラスコーリニコフの「ナポレオン理論」を説明できる','作品の心理劇的特徴を言えた','ドストエフスキーの生涯と作品の関係を理解した'],
+        sections:[
+          {type:'info-box',content:'「罪と罰」（1866年）はドストエフスキーの代表作。貧しい青年が殺人を犯し、良心の呵責と自白へ向かうまでの心理を克明に描く。'},
+          {type:'video',url:null,label:'📹 動画解説：罪と罰を3分で（準備中）'},
+          {type:'heading',content:'ラスコーリニコフの「ナポレオン理論」'},
+          {type:'text',content:'主人公ラスコーリニコフは「人間は二種類に分けられる——法を超えた支配者（ナポレオン型）と法に従う凡人」という独自理論を持つ。高利貸しの老婆を殺すことで「自分がナポレオン型かを試す」という動機で殺人に至る。しかし殺害後、想定外の心理的苦悩が彼を蝕んでいく。'},
+          {type:'highlight-box',title:'「罪と罰」の3大読みどころ',items:['心理描写の精密さ：殺害前の妄想・実行時の錯乱・殺害後の妄想と恐怖——内面の変化が映画のように描かれる','ソーニャとの対話：娼婦として家族を養うソーニャとの出会いが「神への信仰」「他者への愛」というテーマを担う','自白の意味：最終的な自白は「刑事的な証拠」ではなく「魂の解放」として描かれる。罰を受けることが救済になる逆説']},
+          {type:'manga',url:null,label:'🎨 漫画版：殺害とその後の苦悩（準備中）'},
+          {type:'text',content:'ドストエフスキー自身も一度処刑台に立った（ニコライ1世の特赦で死刑執行直前に中断）。その後4年間のシベリア流刑を経験し、その体験が「罪と罰」「カラマーゾフの兄弟」に深く刻まれている。死の恐怖と信仰の関係は彼の実体験から生まれた。'},
+          {type:'practice',question:'ラスコーリニコフは「凡人を殺すことで自分がナポレオンかを証明する」という論理で殺人を正当化しました。この「超人理論」の論理的欠陥を3つ指摘してください。',answer:'①循環論法：「ナポレオン型は法を超えられる」→「法を超えられたらナポレオン型だ」という証明になっていない。「成功した犯罪者＝偉大な人間」という誤った前提がある。②他者の尊厳の無視：「凡人の命は価値が低い」という前提自体が、自分の主観的な価値判断に過ぎない。誰が誰を「凡人」と評価できるのかが問われていない。③感情の過小評価：「理性的な超人は感情に左右されない」と信じていたが、現実の殺害後に心理的崩壊が起きた。人間の感情・良心を完全に排除できるという想定が崩れた。'},
+          {type:'glossary',terms:[{term:'ナポレオン理論',definition:'ラスコーリニコフが「罪と罰」で持つ独自思想。「人間は支配者（ナポレオン型）と凡人に二分される。支配者は人類の進歩のために法を超えることができる」という超人理論。ニーチェの超人思想とも通底する。'},{term:'ポリフォニー小説',definition:'批評家バフチンが「ドストエフスキーの詩学」で提唱した概念。作者の声ではなく複数のキャラクターが独立した声を持ち、対話・対立する小説形式。「罪と罰」はその典型例。'},{term:'メメント・モリ',definition:'「死を忘れるな」というラテン語。ドストエフスキーが処刑台で経験した「死の瞬間」が、彼の文学に通底するテーマ。人間の根源的な死への恐怖と生への意志が作品の原動力になっている。'}]},
+          {type:'summary',content:'「罪と罰」は「思想が人を動かし、現実が思想を打ち砕く」物語。150年前に書かれたとは思えない心理描写の精密さは、現代の小説を超えていると言う読者も多い。',nextLesson:'世界文学コース完了！'}
+        ]
+      }
+    ]
+  }
+];
+
+const QUIZ_POOL=[
+  {q:'「嫌われる勇気」で提唱されるアドラーの概念で、「これは誰の問題か？」を問う考え方は？',opts:['超人理論','課題の分離','目的論','共同体感覚'],ans:1,exp:'課題の分離はアドラー心理学の核心概念。「これは自分の課題か他者の課題か」を区別し、他者の課題に介入しないことで対人関係の悩みが解消されると説く。'},
+  {q:'「7つの習慣」でコヴィーが最も重要視する「第2の領域」とはどれか？',opts:['緊急で重要なこと','重要だが緊急でないこと','緊急だが重要でないこと','緊急でも重要でもないこと'],ans:1,exp:'第2の領域は「重要だが緊急でない」活動——健康・人間関係・スキル・長期計画など。多くの人が後回しにするが、人生の質を決定する最重要ゾーンとコヴィーは主張する。'},
+  {q:'「こころ」（夏目漱石）で、先生が生涯抱え続けた罪の内容は？',opts:['友人の財産を横領した','友人Kが好きな女性を横取りしてKを自殺に追いやった','師匠を裏切って別の師匠についた','戦争で戦友を見捨てた'],ans:1,exp:'先生はKが告白した直後、Kより先にお嬢さんの父親に結婚の申し込みをしてKを出し抜いた。その後Kは自殺し、先生は生涯この罪を抱え続けた。'},
+  {q:'「人間失格」の主人公・大庭葉蔵が幼少期から使い続けた「処世術」は？',opts:['完璧主義','道化（人を笑わせること）','無口を装うこと','勉強で優秀さを示すこと'],ans:1,exp:'葉蔵は「人間が怖い」という根本的な恐怖を隠すために「道化（ピエロ）」を演じ、人を笑わせることで関係を保った。この仮面が本音との境界を消していく。'},
+  {q:'「罪と罰」のラスコーリニコフが殺人を犯した動機の核心は？',opts:['お金が必要だったから','自分がナポレオン型の超人かを証明するため','復讐のため','被害者が社会の悪だと信じたから'],ans:1,exp:'ラスコーリニコフは「人間は支配者と凡人に二分される」という理論を持ち、高利貸しの殺害によって「自分がナポレオン型（法を超えた超人）かを試す」という動機で犯行に及んだ。'},
+  {q:'太宰治が「人間失格」を発表した後、どうなったか？',opts:['大ヒットで文壇の頂点に立った','発表3ヶ月後に入水自殺した','海外に渡り続編を執筆した','改宗して宗教家になった'],ans:1,exp:'太宰治は「人間失格」発表の約3ヶ月後の1948年6月、愛人・山崎富栄と玉川上水で入水自殺した。本作は事実上の遺作となった。'},
+  {q:'夏目漱石の「則天去私」という言葉の意味は？',opts:['天皇に従って私欲を捨てる','天（自然・真理）に従ってエゴ（私）を去る','天下を取るために私財を使う','天才だけが自我を持てる'],ans:1,exp:'「則天去私」は漱石の晩年の境地を表す言葉。利己的なエゴを捨て、自然・真理に従う生き方を理想とした。「こころ」で描いた人物たちのエゴの苦しみへのアンサーでもある。'},
+  {q:'ドストエフスキーが「罪と罰」を書く前に体験した出来事として正しいのは？',opts:['革命に失敗して亡命した','死刑台に立ち、直前に特赦でシベリア流刑になった','弟を事故で亡くした','賭博で全財産を失った'],ans:1,exp:'ドストエフスキーは1849年、革命家グループへの参加で逮捕・死刑判決。処刑直前にニコライ1世の特赦でシベリア流刑（4年）に変更。この体験が「死の恐怖と信仰」という彼の文学のテーマを生んだ。'}
+];
+
+let state={};
+let curLesson=null;
+let quizIdx=0,quizScore=0,quizAnswered=false;
+
+function save(){localStorage.setItem('rb-reading-works-academy',JSON.stringify(state));}
+function load(){const d=localStorage.getItem('rb-reading-works-academy');if(d){state=JSON.parse(d);}else{state={done:{},checks:{}};}}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function showScr(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function goHome(){showScr('s1');renderHome();}
+function getTotalLessons(){return COURSES.reduce((s,c)=>s+c.lessons.length,0);}
+function getCompletedLessons(){return Object.values(state.done||{}).filter(Boolean).length;}
+function getCompletedCourses(){return COURSES.filter(c=>c.lessons.every(l=>state.done&&state.done[l.id])).length;}
+
+function renderHome(){
+  load();
+  const total=getTotalLessons(),comp=getCompletedLessons();
+  document.getElementById('statComp').textContent=comp;
+  document.getElementById('statPct').textContent=total?Math.round(comp/total*100)+'%':'0%';
+  document.getElementById('statCourses').textContent=getCompletedCourses();
+  document.getElementById('dailyTipText').textContent=TIPS[new Date().getDate()%TIPS.length];
+  const cl=document.getElementById('courseList');
+  cl.innerHTML=COURSES.map(c=>{
+    const tot=c.lessons.length,dn=c.lessons.filter(l=>state.done&&state.done[l.id]).length;
+    const pct=tot?Math.round(dn/tot*100):0;
+    return '<div class="course-card" onclick="toggleCourse(\''+c.id+'\')">'
+      +'<div class="course-head"><div class="course-emoji">'+c.emoji+'</div>'
+      +'<div class="course-info"><h3>'+c.title+'</h3><span class="badge '+c.badgeClass+'">'+c.level+'</span></div></div>'
+      +'<div class="course-desc">'+c.desc+'</div>'
+      +'<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>'
+      +'<div class="progress-lbl">'+dn+'/'+tot+' レッスン完了</div>'
+      +'<div class="lesson-list" id="lessons-'+c.id+'" style="display:none">'
+      +c.lessons.map(l=>{const dn2=state.done&&state.done[l.id];
+        return '<div class="lesson-item" onclick="event.stopPropagation();openLesson(\''+c.id+'\',\''+l.id+'\')">'
+          +'<div class="lesson-check'+(dn2?' done':'')+'">'+(dn2?'✓':'')+'</div>'
+          +'<div class="lesson-title">'+l.title+'</div><div class="lesson-dur">'+l.duration+'</div></div>';
+      }).join('')+'</div></div>';
+  }).join('');
+}
+
+function toggleCourse(cid){const el=document.getElementById('lessons-'+cid);el.style.display=el.style.display==='none'?'block':'none';}
+
+function openLesson(cid,lid){
+  load();
+  const course=COURSES.find(c=>c.id===cid);if(!course)return;
+  const lesson=course.lessons.find(l=>l.id===lid);if(!lesson)return;
+  curLesson={cid,lid,course,lesson};
+  const checks=(state.checks&&state.checks[lid])||{};
+  let html='<div class="lesson-hdr"><h2>'+lesson.title+'</h2>'
+    +'<div class="lesson-meta"><span>⏱ '+lesson.duration+'</span><span>📖 '+course.title+'</span>'
+    +(lesson.videoUrl?'<span style="color:#E8354A">🎬 動画あり</span>':'')
+    +(lesson.mangaUrl?'<span style="color:#5BC8E8">🎨 漫画あり</span>':'')
+    +'</div></div>';
+
+  lesson.sections.forEach((sec,si)=>{
+    if(sec.type==='info-box'){
+      html+='<div class="section-block"><div class="info-box">ℹ️ '+sec.content+'</div></div>';
+    }else if(sec.type==='video'){
+      if(sec.url){
+        html+='<div class="section-block"><div class="video-slot"><iframe src="'+sec.url+'" allowfullscreen></iframe></div></div>';
+      }else{
+        html+='<div class="section-block"><div class="video-placeholder"><div class="vp-icon">🎬</div><div class="vp-text">'+sec.label+'</div></div></div>';
+      }
+    }else if(sec.type==='manga'){
+      if(sec.url){
+        html+='<div class="section-block"><div class="manga-slot"><img src="'+sec.url+'" alt="漫画解説"></div></div>';
+      }else{
+        html+='<div class="section-block"><div class="manga-placeholder"><div class="mp-icon">🎨</div><div class="mp-text">'+sec.label+'</div></div></div>';
+      }
+    }else if(sec.type==='heading'){
+      html+='<div class="section-block"><div class="sec-heading">'+sec.content+'</div></div>';
+    }else if(sec.type==='text'){
+      html+='<div class="section-block"><div class="text-block">'+sec.content+'</div></div>';
+    }else if(sec.type==='highlight-box'){
+      html+='<div class="section-block"><div class="highlight-box"><div class="hl-title">⭐ '+sec.title+'</div><ul>'
+        +sec.items.map(i=>'<li>'+i+'</li>').join('')+'</ul></div></div>';
+    }else if(sec.type==='practice'){
+      html+='<div class="section-block"><div class="practice-block">'
+        +'<div class="practice-q">💭 考えてみよう：'+sec.question+'</div>'
+        +'<button class="reveal-btn" onclick="revealAns('+si+')">解答例を見る</button>'
+        +'<div class="practice-a" id="ans-'+si+'">'+sec.answer+'</div></div></div>';
+    }else if(sec.type==='glossary'){
+      html+='<div class="section-block"><div class="glossary-block"><div class="glossary-title">📖 用語集</div>'
+        +sec.terms.map(t=>'<div class="glossary-term"><div class="term">'+t.term+'</div><div class="def">'+t.definition+'</div></div>').join('')
+        +'</div></div>';
+    }else if(sec.type==='summary'){
+      html+='<div class="section-block"><div class="summary-block"><div class="sum-lbl">✅ まとめ</div>'
+        +'<p>'+sec.content+'</p><div class="sum-next">→ '+sec.nextLesson+'</div></div></div>';
+    }
+  });
+
+  html+='<div class="checklist"><div class="sec-title">📋 習得チェック</div>'
+    +lesson.checkItems.map((item,i)=>{const chk=checks[i]||false;
+      return '<div class="check-item'+(chk?' checked':'')+'" onclick="toggleCheck('+i+')" id="chk-'+i+'">'
+        +'<input type="checkbox"'+(chk?' checked':'')+' readonly> <div class="check-label">'+item+'</div></div>';
+    }).join('')+'</div>';
+
+  const isDone=state.done&&state.done[lid];
+  html+='<button class="complete-btn" id="completeBtn" onclick="completeLesson()"'+(isDone?' disabled':'')+'>'+( isDone?'✅ 完了済み':'✅ このレッスンを完了する')+'</button>';
+
+  const allLessons=COURSES.flatMap(c=>c.lessons.map(l=>({cid:c.id,lid:l.id})));
+  const flatIdx=allLessons.findIndex(x=>x.cid===cid&&x.lid===lid);
+  html+='<div class="lesson-nav">';
+  if(flatIdx>0){const p=allLessons[flatIdx-1];html+='<button onclick="openLesson(\''+p.cid+'\',\''+p.lid+'\')">← 前のレッスン</button>';}
+  if(flatIdx<allLessons.length-1){const n=allLessons[flatIdx+1];html+='<button class="primary" onclick="openLesson(\''+n.cid+'\',\''+n.lid+'\')">次のレッスン →</button>';}
+  html+='</div>';
+  document.getElementById('lessonContent').innerHTML=html;
+  showScr('s2');
+}
+
+function revealAns(si){const el=document.getElementById('ans-'+si);if(el)el.classList.add('shown');}
+function toggleCheck(i){if(!curLesson)return;const lid=curLesson.lid;if(!state.checks)state.checks={};if(!state.checks[lid])state.checks[lid]={};state.checks[lid][i]=!state.checks[lid][i];save();const el=document.getElementById('chk-'+i);if(el){el.classList.toggle('checked',state.checks[lid][i]);el.querySelector('input').checked=state.checks[lid][i];}}
+function completeLesson(){if(!curLesson)return;if(!state.done)state.done={};state.done[curLesson.lid]=true;save();showToast('レッスン完了！📖');const btn=document.getElementById('completeBtn');if(btn){btn.textContent='✅ 完了済み';btn.disabled=true;}}
+
+function startQuiz(){quizIdx=0;quizScore=0;quizAnswered=false;showScr('s3');renderQuiz();}
+function renderQuiz(){
+  const wrap=document.getElementById('quizWrap');
+  if(quizIdx>=QUIZ_POOL.length){const pct=Math.round(quizScore/QUIZ_POOL.length*100);
+    wrap.innerHTML='<div class="quiz-score-big"><div class="score-num">'+quizScore+'/'+QUIZ_POOL.length+'</div><p>正解率 '+pct+'%'+(pct>=80?' — 文学博士！📚':pct>=60?' — もう少し！':' — 復習しよう')+'</p></div>'
+      +'<button class="next-q-btn" onclick="startQuiz()">もう一度</button>'
+      +'<button class="next-q-btn" style="margin-top:8px;background:#161b22;color:#F5C842;border:1px solid #F5C842" onclick="goHome()">ホームに戻る</button>';
+    return;
+  }
+  const q=QUIZ_POOL[quizIdx];quizAnswered=false;
+  wrap.innerHTML='<div class="quiz-progress">問題 '+(quizIdx+1)+'/'+QUIZ_POOL.length+' &nbsp; スコア: '+quizScore+'</div>'
+    +'<div class="quiz-q">'+q.q+'</div>'
+    +'<div class="quiz-opts">'+q.opts.map((o,i)=>'<button onclick="answerQuiz('+i+')" id="qopt-'+i+'">'+o+'</button>').join('')+'</div>'
+    +'<div class="quiz-result" id="qresult"></div>';
+}
+function answerQuiz(i){if(quizAnswered)return;quizAnswered=true;const q=QUIZ_POOL[quizIdx];const correct=i===q.ans;if(correct)quizScore++;document.querySelectorAll('.quiz-opts button').forEach((btn,idx)=>{if(idx===q.ans)btn.classList.add('correct');else if(idx===i&&!correct)btn.classList.add('wrong');btn.disabled=true;});const res=document.getElementById('qresult');res.innerHTML=(correct?'✅ 正解！':'❌ 不正解...')+' '+q.exp+'<button class="next-q-btn" onclick="nextQ()" style="margin-top:10px">次の問題 →</button>';res.classList.add('shown');}
+function nextQ(){quizIdx++;renderQuiz();}
+
+load();
+renderHome();
+</script>
+</body>
+</html>
